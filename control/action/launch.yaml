@@ -11,9 +11,9 @@ control:
 
     launch_menu_rehash: |
       programs = SortedSet.new
-      ENV['PATH'].squeeze(':').split(':').each do |d|
-        Pathname.new(d).expand_path.children.
-        each {|f| programs << f.basename.to_s if f.file? and f.executable? }
+      ENV['PATH'].squeeze(':').split(':').map {|d| Pathname.new(d) }.select(&:exist?).each do |path|
+        path.children.select(&:file?).select(&:executable?).
+        each {|f| programs << f.basename.to_s }
       end
       $launch_menu = programs.to_a
 
